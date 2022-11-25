@@ -82,27 +82,6 @@ def get_expected(input, neuron):
 
     return expected
 
-# Recibe un input que atraviesa las capas de neuronas y devuelve la salida
-def feed_forward(hidden_layers_neurons, activation_array):
-    input_size = activation_array.shape[0]
-    # weigths_layer = np.zeros(shape=(hidden_layers, hidden_layers_neurons))
-    # weigths_layer = np.random.randn(hidden_layers_neurons, input_size)
-    # weigth_output = np.random.randn(1, hidden_layers_neurons)
-    weigths_layer = np.asarray((1, 0, 1, 0))
-    weigth_output = np.asarray((1, 0, 1, 0))
-    bias_layer = np.zeros((hidden_layers_neurons, 1))
-    bias_output = np.zeros((1, 1))
-
-    activation_array = predict(activation_array, weigths_layer, bias_layer)
-
-    output_array = sigmoid(np.asarray()*weigth_output + bias_output)
-    # output_array = predict(activation_array, weigth_output, bias_output)
-
-    # variables = (activation_array, weigths_layer, weigth_output, bias_layer, bias_output)
-
-
-    return output_array
-
 # Predice la salida
 def predict(input_array, weigths, bias):
     # Producto de dos arrays -> dot(x, y) = x[0] * y[0] + x[1] * y[1],...
@@ -154,10 +133,9 @@ def test_neuronas():
         t1_output[n] = predict(input, t1_weigth, t1_bias)
         t2_output[n] = predict(input, t2_weigth, t2_bias)
         t3_output[n] = predict(input, t3_weigth, t3_bias)
-        t4_output[n] = predict(input, t4_weigth, t4_bias)
+        t3_output[n] = predict(input, t4_weigth, t4_bias)
         tf_output[n] = predict(input, tf_weigth, tf_bias)
 
-    # TODO
     # f = sigmoidea(bias_f + np.sum(np.asarray((T1,T2,T3,T4)*peso_f)))
 
     # Imprime los resultados
@@ -184,14 +162,6 @@ def test_neuronas():
 
 def main():
     test_neuronas()
-    learning_rate = 0.1
-    trainings = 1
-    input_bits = 4
-    hidden_layers_neurons = 4
-    input_array, expected_array = generate_arrays(input_bits)
-    # print("INPUT: ", input_array)
-    # print("EXPECTED: ", expected_array)
-    # for training in range(trainings):
 
 if (__name__ == "__main__"):
     main()

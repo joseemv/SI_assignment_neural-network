@@ -1,4 +1,6 @@
 import numpy as np
+from tensorflow import keras
+from keras import layers
 
 #           TABLA DE LA VERDAD
 #              --------------------------
@@ -31,7 +33,7 @@ VALID_T3 = np.asarray((0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15))
 VALID_T4 = np.asarray(8)
 VALID_F = np.asarray((0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15))
 
-# Genera los arrays de entradas y salidas esperadas
+# Genera el vector de entradas y el vector de salidas esperadas para cada neurona y la función
 def generate_arrays(input_bits):
     # Número de entradas posibles en función de los bits de entrada
     input_size = np.power(2, input_bits)
@@ -82,6 +84,30 @@ def get_expected(input, neuron):
 
     return expected
 
+# Devuelve el resultado de la función para la tupla introducida
+def forward(tuple):
+    # Pesos
+    t1_weigth = np.asarray((90, -1000, 90, -1000))
+    t2_weigth = np.asarray((-1000, -1000, -1000, 0))
+    t3_weigth = np.asarray((1000, -14, -2, -14))
+    t4_weigth = np.asarray((1000, -1000, -1000, -1000))
+    tf_weigth = np.asarray((1000, 1000, 1000, 1000))
+    # Bias
+    t1_bias = -100
+    t2_bias = 20
+    t3_bias = 22
+    t4_bias = -100
+    tf_bias = -100
+    
+    t1_output = predict(tuple, t1_weigth, t1_bias)
+    t2_output = predict(tuple, t2_weigth, t2_bias)
+    t3_output = predict(tuple, t3_weigth, t3_bias)
+    t4_output = predict(tuple, t4_weigth, t4_bias)
+    neurons_output = np.asarray((t1_output, t2_output, t3_output, t4_output))
+    f_output = predict(neurons_output, tf_weigth, tf_bias)
+
+    return f_output
+
 # Predice la salida
 def predict(input_array, weigths, bias):
     # Producto de dos arrays -> dot(x, y) = x[0] * y[0] + x[1] * y[1],...
@@ -98,7 +124,7 @@ def calculate_error(expected_array, output_array):
     return np.sum(np.square(expected_array - output_array)) / (2*len(output_array))
 
 # Demuestra el comportamiento de las neuronas en función de las entradas y los pesos y bias asignados
-def test_neuronas():
+def train_manually():
     # Vectores de salida
     t1_output = np.zeros(shape=(16, 1))
     t2_output = np.zeros(shape=(16, 1))
@@ -136,8 +162,6 @@ def test_neuronas():
         t3_output[n] = predict(input, t4_weigth, t4_bias)
         tf_output[n] = predict(input, tf_weigth, tf_bias)
 
-    # f = sigmoidea(bias_f + np.sum(np.asarray((T1,T2,T3,T4)*peso_f)))
-
     # Imprime los resultados
     with np.printoptions(suppress=True, precision=8):
         print("Salida T1")
@@ -160,8 +184,39 @@ def test_neuronas():
         for i in range(16):
             print("Input:", format(i, '04b'), "| Output:", tf_output[i])
 
+# Entrena las neuronas mediante Keras e imprime los resultados
+def train_keras():
+    input_bits = 4
+    # Genera las entradas y salidas esperadas
+    input_array, expected_arrays = generate_arrays(input_bits)
+    # Selecciona la salida esperada de la función
+    f_expected_array = expected_arrays[4]
+
+    # Prepara el modelo de entrenamiento
+    model = keras.Sequential(
+        [
+            keras.Input(shape=(4)),
+            layers.Dense(4, activation="sigmoid"),
+            layers.Dense(1, activation="sigmoid")
+        ]
+    )
+    model.compile(loss="mean_squared_error", optimizer="adam")
+    # Entrena la red
+    model.fit(input_array, f_expected_array, batch_size=16, epochs=10000)
+    # Obtiene pesos y bias calculados
+    weigth_layers = model.layers[0].get_weights()[0]
+    bias_layers = model.layers[0].get_weights()[1]
+    # Predice la salida
+    output_array = model.predict(input_array)
+
+    # Imprime resultados
+    for input, output in zip(input_array, output_array):
+        print("Input:", input, "Output:", output)
+    print("Weights:", weigth_layers)
+    print("Bias:", bias_layers)
+
 def main():
-    test_neuronas()
+    train_keras()
 
 if (__name__ == "__main__"):
     main()

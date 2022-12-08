@@ -87,11 +87,11 @@ def get_expected(input, neuron):
 # Devuelve el resultado de la función para la tupla introducida
 def forward(tuple):
     # Pesos
-    t1_weigth = np.asarray((90, -1000, 90, -1000))
-    t2_weigth = np.asarray((-1000, -1000, -1000, 0))
-    t3_weigth = np.asarray((1000, -14, -2, -14))
-    t4_weigth = np.asarray((1000, -1000, -1000, -1000))
-    tf_weigth = np.asarray((1000, 1000, 1000, 1000))
+    t1_weight = np.asarray((90, -1000, 90, -1000))
+    t2_weight = np.asarray((-1000, -1000, -1000, 0))
+    t3_weight = np.asarray((1000, -14, -2, -14))
+    t4_weight = np.asarray((1000, -1000, -1000, -1000))
+    tf_weight = np.asarray((1000, 1000, 1000, 1000))
     # Bias
     t1_bias = -100
     t2_bias = 20
@@ -99,19 +99,19 @@ def forward(tuple):
     t4_bias = -100
     tf_bias = -100
     
-    t1_output = predict(tuple, t1_weigth, t1_bias)
-    t2_output = predict(tuple, t2_weigth, t2_bias)
-    t3_output = predict(tuple, t3_weigth, t3_bias)
-    t4_output = predict(tuple, t4_weigth, t4_bias)
+    t1_output = predict(tuple, t1_weight, t1_bias)
+    t2_output = predict(tuple, t2_weight, t2_bias)
+    t3_output = predict(tuple, t3_weight, t3_bias)
+    t4_output = predict(tuple, t4_weight, t4_bias)
     neurons_output = np.asarray((t1_output, t2_output, t3_output, t4_output))
-    f_output = predict(neurons_output, tf_weigth, tf_bias)
+    f_output = predict(neurons_output, tf_weight, tf_bias)
 
     return f_output
 
 # Predice la salida
-def predict(input_array, weigths, bias):
+def predict(input_array, weights, bias):
     # Producto de dos arrays -> dot(x, y) = x[0] * y[0] + x[1] * y[1],...
-    activation = np.dot(input_array, weigths) + bias
+    activation = np.dot(input_array, weights) + bias
 
     return sigmoid(activation)
 
@@ -132,11 +132,11 @@ def train_manually():
     t4_output = np.zeros(shape=(16, 1))
     tf_output = np.zeros(shape=(16, 1))
     # Pesos
-    t1_weigth = np.asarray((90, -1000, 90, -1000))
-    t2_weigth = np.asarray((-1000, -1000, -1000, 0))
-    t3_weigth = np.asarray((1000, -14, -2, -14))
-    t4_weigth = np.asarray((1000, -1000, -1000, -1000))
-    tf_weigth = np.asarray((1000, -20, -2, -20))
+    t1_weight = np.asarray((90, -1000, 90, -1000))
+    t2_weight = np.asarray((-1000, -1000, -1000, 0))
+    t3_weight = np.asarray((1000, -14, -2, -14))
+    t4_weight = np.asarray((1000, -1000, -1000, -1000))
+    tf_weight = np.asarray((1000, -20, -2, -20))
     # Bias
     t1_bias = -100
     t2_bias = 20
@@ -156,11 +156,11 @@ def train_manually():
         input = np.asarray((a, b, c, d))
 
         # Predice el resultado
-        t1_output[n] = predict(input, t1_weigth, t1_bias)
-        t2_output[n] = predict(input, t2_weigth, t2_bias)
-        t3_output[n] = predict(input, t3_weigth, t3_bias)
-        t3_output[n] = predict(input, t4_weigth, t4_bias)
-        tf_output[n] = predict(input, tf_weigth, tf_bias)
+        t1_output[n] = predict(input, t1_weight, t1_bias)
+        t2_output[n] = predict(input, t2_weight, t2_bias)
+        t3_output[n] = predict(input, t3_weight, t3_bias)
+        t3_output[n] = predict(input, t4_weight, t4_bias)
+        tf_output[n] = predict(input, tf_weight, tf_bias)
 
     # Imprime los resultados
     with np.printoptions(suppress=True, precision=8):
@@ -204,15 +204,15 @@ def train_keras():
     # Entrena la red
     model.fit(input_array, f_expected_array, batch_size=16, epochs=10000)
     # Obtiene pesos y bias calculados
-    weigth_layers = model.layers[0].get_weights()[0]
+    weight_layers = model.layers[0].get_weights()[0]
     bias_layers = model.layers[0].get_weights()[1]
     # Predice la salida
     output_array = model.predict(input_array)
 
     # Imprime resultados
-    for input, output in zip(input_array, output_array):
-        print("Input:", input, "Output:", output)
-    print("Weights:", weigth_layers)
+    for input, expected, output in zip(input_array, f_expected_array, output_array):
+        print("Input:", input, "Expected:", expected, "Output:", output)
+    print("Hidden layer weights:", weight_layers)
     print("Bias:", bias_layers)
 
 def main():

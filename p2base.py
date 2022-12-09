@@ -126,6 +126,7 @@ def calculate_error(expected_array, output_array):
 
 # Demuestra el comportamiento de las neuronas en función de las entradas y los pesos y bias asignados
 def train_manually():
+    # Parámetros
     input_bits = 4
     # Vectores de salida
     t1_output = np.zeros(shape=(16, 1))
@@ -180,6 +181,7 @@ def train_manually():
 
 # Entrena las neuronas mediante Keras e imprime los resultados
 def train_keras():
+    # Parámetros
     input_bits = 4
     neurons_hidden_layers = 4
     neurons_output_layer = 1
@@ -227,9 +229,5 @@ def train_keras():
     print("")
     print("Time:", finish_time)
 
-def main():
-    train_manually()
-    train_keras()
-
 if (__name__ == "__main__"):
-    main()
+    pass
